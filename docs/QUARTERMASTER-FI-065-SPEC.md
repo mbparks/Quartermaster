@@ -2,8 +2,8 @@
 ## Field Instrument No. 065
 ### Workshop Stores and Inventory
 
-**Document revision:** 1.0 (as built)
-**Status:** Matches shipped release v1.0.0 (2026-07-05)
+**Document revision:** 1.1 (as built)
+**Status:** Matches shipped release v1.1.0 (2026-07-05)
 **Author:** M.B. Parks, Green Shoe Garage
 **Motto:** "Sighted, counted, stowed."
 
@@ -79,7 +79,7 @@ Format: `SITE/AREA/SHELF/BIN`, e.g., `GSG/W2/S3/B07`.
 
 - Location browser: pick any prefix and see every card mustered to it, like opening a drawer.
 - Locations are freeform-but-structured: validated to the four-segment pattern, no pre-registration required in v1.0.
-- Printable bin labels: GSN, nomenclature, location code. QR codes deferred (see Section 9).
+- Printable bin labels via the Labels page (shipped in v1.1.0): Avery 5160 and 5163 sheet layouts, class and location-prefix filtering, per-card selection, and a skip-used-positions offset for partially used sheets. Labels carry GSN, nomenclature, location code, and unit of issue. QR codes remain deferred (see Section 9).
 
 ## 5. Muster Mode
 
@@ -119,7 +119,11 @@ Musters can be paused and resumed. Only one muster open at a time in v1.0.
 
 ## 9. Scope
 
-### v1.0 MVP (build to this, then stop for review)
+### v1.1 (shipped)
+
+- Label sheet generator (Labels page): Avery 5160 and 5163, filtering, selection, offset, print-exact preview
+
+### v1.0 MVP (shipped)
 
 - Stock cards with GSN auto-assignment and class registry
 - Append-only transaction ledger with VOID soft-delete corrections
@@ -140,7 +144,6 @@ Musters can be paused and resumed. Only one muster open at a time in v1.0.
 - Spot-check (random sample) muster variant
 - Photo attachments on cards
 - HACKER ALMANAC cross-linking (open question: link part cards to component family reference entries)
-- Printable label sheet generator
 
 ## 10. Development Standards (per Field Instrument template rev. 3)
 
