@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<!-- QUARTERMASTER FI-065 v1.0.0 build 2026-07-05 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QUARTERMASTER · FI-065 · Workshop Stores</title>
+<style>
+:root{
+  --bg:#16090a; --panel:#241012; --panel2:#2e1517; --ink:#f3c9b8; --dim:#b08a7e;
+  --accent:#ff6a54; --brass:#d9a05b; --line:#4a2320; --danger:#ff6a54; --ok:#8fbf7f;
+  --stamp:#ff5a45; --card:#2a1214; --cardline:#5a2c26; --focus:#ffd27a;
+  --font-display:"Haettenschweiler","Impact","Arial Narrow",sans-serif;
+  --font-mono:"Courier New",Courier,monospace;
+  --radius:3px;
+}
+[data-theme="day"]{
+  --bg:#ddd0b2; --panel:#f0e6cc; --panel2:#e7dabb; --ink:#2e2418; --dim:#6d5f49;
+  --accent:#8b2f26; --brass:#6b5432; --line:#c2b28a; --danger:#8b2f26; --ok:#3f6b34;
+  --stamp:#a3352a; --card:#f6eed7; --cardline:#b8a87e; --focus:#8b2f26;
+}
+[data-theme="contrast"]{
+  --bg:#000; --panel:#000; --panel2:#111; --ink:#fff; --dim:#d0d0d0;
+  --accent:#ffd400; --brass:#ffd400; --line:#fff; --danger:#ff5050; --ok:#40ff80;
+  --stamp:#ffd400; --card:#000; --cardline:#fff; --focus:#ffd400;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-mono);font-size:15px;line-height:1.45;min-height:100vh}
+[data-theme="contrast"] body, [data-theme="contrast"] .panel{border-width:2px}
+h1,h2,h3{font-family:var(--font-display);letter-spacing:.06em;text-transform:uppercase;font-weight:400;margin:.2em 0 .4em}
+h1{font-size:1.6rem} h2{font-size:1.35rem;color:var(--brass)} h3{font-size:1.1rem;color:var(--brass)}
+a{color:var(--accent)}
+button, .btn{font-family:var(--font-mono);font-size:.95rem;background:var(--panel2);color:var(--ink);
+  border:1px solid var(--line);border-radius:var(--radius);padding:.45em .9em;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+button:hover{border-color:var(--brass);color:var(--brass)}
+button.primary{border-color:var(--accent);color:var(--accent)}
+button.danger{border-color:var(--danger);color:var(--danger)}
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+input,select,textarea{font-family:var(--font-mono);font-size:.95rem;background:var(--bg);color:var(--ink);
+  border:1px solid var(--line);border-radius:var(--radius);padding:.4em .5em;max-width:100%}
+label{display:block;margin:.6em 0 .15em;color:var(--dim);font-size:.8rem;text-transform:uppercase;letter-spacing:.08em}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{border:1px solid var(--line);padding:.35em .5em;text-align:left;vertical-align:top}
+th{color:var(--brass);text-transform:uppercase;font-size:.75rem;letter-spacing:.08em}
+.mono-num{text-align:right;font-variant-numeric:tabular-nums}
+/* ---- frame ---- */
+#topbar{display:flex;align-items:center;gap:.8em;padding:.5em .9em;border-bottom:2px solid var(--line);background:var(--panel)}
+#topbar .plate{font-family:var(--font-display);font-size:1.35rem;letter-spacing:.1em;text-transform:uppercase}
+#topbar .plate small{color:var(--brass);font-size:.75rem;letter-spacing:.18em;display:block;line-height:1}
+#topbar .spacer{flex:1}
+#burger{font-size:1.1rem}
+#frame{display:flex;min-height:calc(100vh - 58px)}
+#nav{width:190px;flex:0 0 auto;border-right:1px solid var(--line);background:var(--panel);padding:.6em 0;transition:margin-left .15s ease}
+#nav.collapsed{margin-left:-190px}
+#nav a{display:block;padding:.5em 1em;color:var(--ink);text-decoration:none;text-transform:uppercase;font-size:.85rem;letter-spacing:.06em;border-left:4px solid transparent}
+#nav a:hover{color:var(--brass)}
+#nav a.active{border-left-color:var(--accent);color:var(--accent);background:var(--panel2)}
+#main{flex:1;padding:1em 1.2em 4em;max-width:1100px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:.9em 1em;margin:.8em 0}
+.row{display:flex;flex-wrap:wrap;gap:.8em;align-items:flex-end}
+.row > div{flex:1;min-width:130px}
+.toolbar{display:flex;flex-wrap:wrap;gap:.5em;align-items:center;margin:.6em 0}
+.muted{color:var(--dim);font-size:.85rem}
+.tag{display:inline-block;border:1px solid var(--line);border-radius:var(--radius);padding:.05em .4em;font-size:.75rem;color:var(--dim);margin-right:.3em}
+.low{color:var(--danger);font-weight:bold}
+.qty-ok{color:var(--ok)}
+.clickable{cursor:pointer}
+tr.clickable:hover td{background:var(--panel2)}
+/* ---- stamps ---- */
+.stamp{display:inline-block;border:3px double var(--stamp);color:var(--stamp);padding:.1em .5em;
+  font-family:var(--font-display);letter-spacing:.15em;text-transform:uppercase;font-size:.95rem;border-radius:4px;opacity:.9}
+.stamp.r1{transform:rotate(-3deg)} .stamp.r2{transform:rotate(2deg)} .stamp.r3{transform:rotate(-1.5deg)}
+.stamp.ok{border-color:var(--ok);color:var(--ok)}
+/* ---- stock card ---- */
+.stockcard{perspective:1200px;max-width:640px;margin:.8em 0}
+.stockcard .inner{position:relative;transform-style:preserve-3d;transition:transform .45s ease;min-height:340px}
+.stockcard.flipped .inner{transform:rotateY(180deg)}
+.face,.back{backface-visibility:hidden;position:absolute;inset:0;background:var(--card);border:1px solid var(--cardline);
+  border-radius:var(--radius);padding:1em 1.1em;box-shadow:2px 3px 0 rgba(0,0,0,.25);overflow:auto}
+.back{transform:rotateY(180deg)}
+.stockcard .gsnblock{font-family:var(--font-display);font-size:1.5rem;letter-spacing:.12em;color:var(--accent)}
+.stockcard .nomen{font-size:1.02rem;text-transform:uppercase;margin:.2em 0 .6em;border-bottom:1px solid var(--cardline);padding-bottom:.4em}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.4em .9em;font-size:.9rem}
+.cardgrid b{display:block;color:var(--dim);font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:normal}
+.punch{position:absolute;top:10px;right:12px;width:16px;height:16px;border-radius:50%;border:2px solid var(--cardline);background:var(--bg)}
+@media (prefers-reduced-motion: reduce){ .stockcard .inner{transition:none} #nav{transition:none} }
+/* ---- muster ---- */
+.muster-card{max-width:560px;margin:1em auto;text-align:center}
+.muster-card .bigqty{font-family:var(--font-display);font-size:3rem;color:var(--brass)}
+.muster-actions{display:flex;gap:.6em;justify-content:center;flex-wrap:wrap;margin-top:1em}
+.muster-actions button{font-size:1.05rem;padding:.8em 1.2em;min-width:120px}
+.report{background:var(--card);border:1px solid var(--cardline);padding:1.2em;max-width:720px}
+.report .sigline{margin-top:2.2em;border-top:1px solid var(--ink);width:280px;padding-top:.2em;font-size:.8rem;color:var(--dim)}
+/* ---- misc ---- */
+.testpass{color:var(--ok)} .testfail{color:var(--danger);font-weight:bold}
+dialog{background:var(--panel);color:var(--ink);border:2px solid var(--line);border-radius:var(--radius);max-width:520px;width:92%}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+#toast{position:fixed;bottom:1em;left:50%;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--brass);
+  color:var(--ink);padding:.5em 1em;border-radius:var(--radius);display:none;z-index:99}
+footer{position:fixed;bottom:0;left:0;right:0;background:var(--panel);border-top:1px solid var(--line);
+  padding:.25em .9em;font-size:.75rem;color:var(--dim);display:flex;gap:1em}
+footer .spacer{flex:1}
+@media(max-width:700px){
+  #nav{position:fixed;z-index:50;height:100%;top:58px}
+  #main{padding:.8em .7em 4em}
+  .muster-actions button{flex:1}
+}
+</style>
+</head>
+<body>
+<header id="topbar">
+  <button id="burger" aria-label="Toggle menu" title="Toggle menu">≡</button>
+  <div class="plate">Quartermaster <small>Field Instrument No. 065 · Workshop Stores</small></div>
+  <div class="spacer"></div>
+  <button id="themeBtn" title="Cycle theme">Theme</button>
+</header>
+<div id="frame">
+  <nav id="nav" aria-label="Main">
+    <a href="#stores" data-page="stores">Stores</a>
+    <a href="#locations" data-page="locations">Locations</a>
+    <a href="#muster" data-page="muster">Muster</a>
+    <a href="#requisition" data-page="requisition">Requisition</a>
+    <a href="#ledger" data-page="ledger">Ledger</a>
+    <a href="#classes" data-page="classes">Classes</a>
+    <a href="#manifest" data-page="manifest">Manifest</a>
+    <a href="#tests" data-page="tests">Test Harness</a>
+    <a href="#about" data-page="about">About</a>
+  </nav>
+  <main id="main" tabindex="-1"></main>
+</div>
+<div id="toast" role="status"></div>
+<footer>
+  <span>QUARTERMASTER v<span id="verFoot"></span></span>
+  <span class="spacer"></span>
+  <span id="storageNote"></span>
+  <span>GPL-3.0</span>
+</footer>
+</file_text>
+<script>
+/* ============================================================
+   QUARTERMASTER FI-065  v1.0.0
+   Core: pure, testable supply logic. No DOM access in QMCore.
+   Ledger is append-only and is the source of truth.
+   ============================================================ */
+const QM_VERSION = "1.0.0";
+const QM_DEBUG = new URLSearchParams(location.search).has("debug");
+function dbg(...a){ if(QM_DEBUG) console.log("[QM]", ...a); }
+
+const QMCore = (() => {
+
+  function blankState(){
+    return {
+      schema: 1,
+      classes: [],        // {code, description, nextSeq}
+      cards: [],          // see spec 3.3
+      transactions: [],   // append-only
+      musters: [],        // open + archived
+      manualReq: []       // GSNs manually pinned to requisition
+    };
+  }
+
+  const TX_TYPES = ["RECEIPT","ISSUE","ADJUST","SURVEY","VOID"];
+  const UOI = ["EA","PR","FT","IN","M","PKG","RL","BX","LB","OZ","G","ML","SET"];
+
+  function txId(state){
+    return "T" + String(state.transactions.length + 1).padStart(6,"0");
+  }
+
+  function voidedIds(state){
+    const s = new Set();
+    for(const t of state.transactions) if(t.type==="VOID" && t.voids) s.add(t.voids);
+    return s;
+  }
+
+  function qtyOnHand(state, gsn){
+    const dead = voidedIds(state);
+    let q = 0;
+    for(const t of state.transactions){
+      if(t.gsn===gsn && t.type!=="VOID" && !dead.has(t.id)) q += t.delta;
+    }
+    return q;
+  }
+
+  function findCard(state, gsn){ return state.cards.find(c=>c.gsn===gsn) || null; }
+  function findClass(state, code){ return state.classes.find(c=>c.code===code) || null; }
+
+  function addClass(state, code, description){
+    code = String(code||"").trim().toUpperCase();
+    if(!/^[A-Z0-9]{2,8}$/.test(code)) throw new Error("Class code must be 2 to 8 letters or digits.");
+    if(findClass(state, code)) throw new Error("Class "+code+" already exists.");
+    state.classes.push({code, description: String(description||"").trim(), nextSeq: 1});
+    return code;
+  }
+
+  function assignGsn(state, code){
+    const cls = findClass(state, code);
+    if(!cls) throw new Error("Unknown class: "+code);
+    const gsn = cls.code + "-" + String(cls.nextSeq).padStart(4,"0");
+    cls.nextSeq += 1;           // sequence numbers are never reused
+    return gsn;
+  }
+
+  function validLocation(loc){
+    return /^[A-Z0-9]+\/[A-Z0-9]+\/[A-Z0-9]+\/[A-Z0-9]+$/.test(loc);
+  }
+
+  function createCard(state, fields){
+    const f = fields || {};
+    if(!f.classCode) throw new Error("Class is required.");
+    if(!f.nomenclature || !String(f.nomenclature).trim()) throw new Error("Nomenclature is required.");
+    const loc = String(f.binLocation||"").trim().toUpperCase();
+    if(!validLocation(loc)) throw new Error("Bin location must be SITE/AREA/SHELF/BIN, letters and digits.");
+    if(!UOI.includes(f.unitOfIssue)) throw new Error("Unit of issue is required.");
+    const gsn = assignGsn(state, f.classCode);
+    const card = {
+      gsn,
+      nomenclature: String(f.nomenclature).trim().toUpperCase(),
+      unitOfIssue: f.unitOfIssue,
+      binLocation: loc,
+      reorderPoint: (f.reorderPoint==="" || f.reorderPoint==null) ? null : Number(f.reorderPoint),
+      reorderQuantity: (f.reorderQuantity==="" || f.reorderQuantity==null) ? null : Number(f.reorderQuantity),
+      source: String(f.source||"").trim(),
+      unitCost: (f.unitCost==="" || f.unitCost==null) ? null : Number(f.unitCost),
+      notes: String(f.notes||""),
+      links: String(f.links||""),
+      status: "ACTIVE",
+      createdAt: new Date().toISOString()
+    };
+    state.cards.push(card);
+    return card;
+  }
+
+  function appendTx(state, type, gsn, delta, opts){
+    opts = opts || {};
+    if(!TX_TYPES.includes(type)) throw new Error("Unknown transaction type: "+type);
+    if(type!=="VOID"){
+      const card = findCard(state, gsn);
+      if(!card) throw new Error("No stock card for "+gsn);
+      delta = Number(delta);
+      if(!Number.isFinite(delta) || delta===0) throw new Error("Quantity delta must be a nonzero number.");
+      if(type==="RECEIPT" && delta<0) throw new Error("Receipts must be positive.");
+      if(type==="ISSUE"){
+        if(delta>0) delta = -delta;
+        if(qtyOnHand(state,gsn) + delta < 0) throw new Error("Insufficient stock to issue. Adjust or receive first.");
+      }
+      if(type==="SURVEY"){
+        if(delta>0) delta = -delta;
+        if(qtyOnHand(state,gsn) + delta < 0) throw new Error("Cannot survey more than on hand.");
+      }
+      if((type==="ADJUST"||type==="SURVEY") && !(opts.note && String(opts.note).trim()))
+        throw new Error(type+" requires a note.");
+    } else {
+      const target = state.transactions.find(t=>t.id===opts.voids);
+      if(!target) throw new Error("VOID target not found.");
+      if(target.type==="VOID") throw new Error("Cannot void a void.");
+      if(voidedIds(state).has(target.id)) throw new Error("Transaction already voided.");
+      if(!(opts.note && String(opts.note).trim())) throw new Error("VOID requires a note.");
+      gsn = target.gsn; delta = 0;
+      // guard: voiding a receipt must not drive stock negative
+      const after = qtyOnHand(state, gsn) - target.delta;
+      if(after < 0) throw new Error("Voiding this transaction would drive stock negative.");
+    }
+    const tx = {
+      id: txId(state),
+      ts: new Date().toISOString(),
+      type, gsn, delta,
+      project: String(opts.project||"").trim(),
+      note: String(opts.note||"").trim(),
+      voids: opts.voids || null
+    };
+    state.transactions.push(tx);
+    return tx;
+  }
+
+  /* ---- muster state machine ---- */
+  function openMuster(state, scopeType, scopeValue){
+    if(state.musters.some(m=>m.status==="OPEN")) throw new Error("A muster is already open. Close it first.");
+    let inScope;
+    if(scopeType==="location"){
+      const pfx = String(scopeValue||"").trim().toUpperCase();
+      if(!pfx) throw new Error("Location prefix required.");
+      inScope = state.cards.filter(c=>c.status==="ACTIVE" && c.binLocation.startsWith(pfx));
+    } else if(scopeType==="class"){
+      if(!findClass(state, scopeValue)) throw new Error("Unknown class.");
+      inScope = state.cards.filter(c=>c.status==="ACTIVE" && c.gsn.startsWith(scopeValue+"-"));
+    } else if(scopeType==="all"){
+      inScope = state.cards.filter(c=>c.status==="ACTIVE");
+    } else throw new Error("Bad scope type.");
+    if(inScope.length===0) throw new Error("No active cards in scope.");
+    const m = {
+      id: "M" + String(state.musters.length+1).padStart(4,"0"),
+      openedAt: new Date().toISOString(), closedAt: null,
+      scopeType, scopeValue: scopeValue||"", status: "OPEN",
+      lines: inScope.map(c=>({gsn:c.gsn, expected: qtyOnHand(state,c.gsn), result:null, observed:null, note:""}))
+    };
+    state.musters.push(m);
+    return m;
+  }
+
+  function openMusterOf(state){ return state.musters.find(m=>m.status==="OPEN") || null; }
+  function nextUnresolvedLine(m){ return m.lines.find(l=>l.result===null) || null; }
+
+  function recordLine(state, m, gsn, result, observed, note){
+    const line = m.lines.find(l=>l.gsn===gsn);
+    if(!line) throw new Error("Line not in muster.");
+    if(line.result!==null) throw new Error("Line already recorded.");
+    if(result==="SIGHTED"){
+      line.result="SIGHTED"; line.observed=line.expected;
+    } else if(result==="ADJUSTED"){
+      observed = Number(observed);
+      if(!Number.isFinite(observed) || observed<0) throw new Error("Observed count must be zero or more.");
+      if(!(note && note.trim())) throw new Error("Adjustment requires a note.");
+      if(observed===line.expected) throw new Error("Observed equals expected. Mark SIGHTED instead.");
+      appendTx(state,"ADJUST",gsn, observed-line.expected, {note:"Muster "+m.id+": "+note});
+      line.result="ADJUSTED"; line.observed=observed; line.note=note;
+    } else if(result==="NOT_SIGHTED"){
+      line.result="NOT_SIGHTED"; line.observed=0; line.note=note||"";
+    } else throw new Error("Bad result.");
+    return line;
+  }
+
+  function musterAccuracy(m){
+    const done = m.lines.filter(l=>l.result!==null);
+    if(done.length===0) return 100;
+    const good = done.filter(l=>l.result==="SIGHTED").length;
+    return Math.round(1000*good/done.length)/10;
+  }
+
+  function closeMuster(state, m, surveyDecisions){
+    // surveyDecisions: {gsn: {survey:true/false, note}}
+    if(m.status!=="OPEN") throw new Error("Muster is not open.");
+    if(nextUnresolvedLine(m)) throw new Error("Unrecorded lines remain.");
+    for(const line of m.lines.filter(l=>l.result==="NOT_SIGHTED")){
+      const d = (surveyDecisions||{})[line.gsn] || {};
+      const onHand = qtyOnHand(state, line.gsn);
+      if(d.survey && onHand>0){
+        appendTx(state,"SURVEY",line.gsn,-onHand,{note:"Muster "+m.id+" not sighted: "+(d.note||"no note")});
+        line.note = (line.note?line.note+" · ":"") + "SURVEYED";
+      } else {
+        line.note = (line.note?line.note+" · ":"") + "SKIPPED: " + (d.note||"no note");
+      }
+    }
+    m.status="CLOSED"; m.closedAt=new Date().toISOString(); m.accuracy=musterAccuracy(m);
+    return m;
+  }
+
+  /* ---- requisition ---- */
+  function requisitionLines(state){
+    const auto = state.cards.filter(c =>
+      c.status==="ACTIVE" && c.reorderPoint!=null && qtyOnHand(state,c.gsn) <= c.reorderPoint);
+    const manual = state.manualReq
+      .map(g=>findCard(state,g))
+      .filter(c=>c && c.status==="ACTIVE" && !auto.includes(c));
+    return [...auto, ...manual].map(c=>({
+      card:c, onHand: qtyOnHand(state,c.gsn),
+      buy: c.reorderQuantity!=null ? c.reorderQuantity : "",
+      est: (c.reorderQuantity!=null && c.unitCost!=null) ? c.reorderQuantity*c.unitCost : null,
+      manual: manual.includes(c)
+    }));
+  }
+
+  return { blankState, TX_TYPES, UOI, txId, voidedIds, qtyOnHand, findCard, findClass,
+           addClass, assignGsn, validLocation, createCard, appendTx,
+           openMuster, openMusterOf, nextUnresolvedLine, recordLine, musterAccuracy,
+           closeMuster, requisitionLines };
+})();
+
+/* ============================================================
+   Storage adapter: localStorage with in-memory fallback.
+   ============================================================ */
+const Store = (() => {
+  const KEY = "quartermaster-fi065-v1";
+  let mem = null, usingMem = false;
+  function load(){
+    try{
+      const raw = localStorage.getItem(KEY);
+      if(raw){ const s = JSON.parse(raw); if(s && s.schema===1) return s; }
+    }catch(e){ usingMem = true; dbg("localStorage unavailable, memory only", e); }
+    return mem || QMCore.blankState();
+  }
+  function save(state){
+    mem = state;
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ usingMem = true; dbg("save failed, memory only", e); }
+  }
+  function memoryOnly(){ return usingMem; }
+  return { load, save, memoryOnly };
+})();
+
+let S = Store.load();
+function persist(){ Store.save(S); }
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.style.display = "block";
+  clearTimeout(t._h); t._h = setTimeout(()=>t.style.display="none", 2600);
+}
+function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function money(n){ return n==null ? "" : "$"+Number(n).toFixed(2); }
+function dt(iso){ return iso ? iso.slice(0,10)+" "+iso.slice(11,16) : ""; }
+function stampRot(){ return "r"+(1+Math.floor(Math.random()*3)); }
+
+/* ============================================================
+   Router and page renderers
+   ============================================================ */
+const Pages = {};
+function go(page, arg){
+  location.hash = arg!==undefined ? page+"/"+encodeURIComponent(arg) : page;
+}
+function route(){
+  const h = location.hash.replace(/^#/,"") || "stores";
+  const [page, arg] = h.split("/");
+  const fn = Pages[page] || Pages.stores;
+  document.querySelectorAll("#nav a").forEach(a=>
+    a.classList.toggle("active", a.dataset.page===page));
+  document.getElementById("main").innerHTML = "";
+  fn(arg!==undefined ? decodeURIComponent(arg) : undefined);
+  document.getElementById("main").focus({preventScroll:true});
+}
+window.addEventListener("hashchange", route);
+
+function render(html){ document.getElementById("main").innerHTML = html; }
+
+/* ---------------- STORES ---------------- */
+let storesFilter = { q:"", cls:"", low:false, archived:false };
+Pages.stores = function(){
+  const f = storesFilter;
+  const clsOpts = S.classes.map(c=>`<option value="${esc(c.code)}" ${f.cls===c.code?"selected":""}>${esc(c.code)}</option>`).join("");
+  let cards = S.cards.filter(c => f.archived ? true : c.status==="ACTIVE");
+  if(f.cls) cards = cards.filter(c=>c.gsn.startsWith(f.cls+"-"));
+  if(f.q){
+    const q = f.q.toUpperCase();
+    cards = cards.filter(c => c.gsn.includes(q) || c.nomenclature.includes(q) || c.binLocation.includes(q));
+  }
+  if(f.low) cards = cards.filter(c => c.reorderPoint!=null && QMCore.qtyOnHand(S,c.gsn)<=c.reorderPoint);
+  cards = [...cards].sort((a,b)=>a.gsn.localeCompare(b.gsn));
+  const rows = cards.map(c=>{
+    const q = QMCore.qtyOnHand(S,c.gsn);
+    const low = c.reorderPoint!=null && q<=c.reorderPoint;
+    return `<tr class="clickable" onclick="go('card','${esc(c.gsn)}')">
+      <td>${esc(c.gsn)}${c.status==="ARCHIVED"?' <span class="tag">ARCHIVED</span>':""}</td>
+      <td>${esc(c.nomenclature)}</td>
+      <td class="mono-num ${low?'low':'qty-ok'}">${q}</td>
+      <td>${esc(c.unitOfIssue)}</td>
+      <td>${esc(c.binLocation)}</td>
+      <td class="mono-num">${c.reorderPoint==null?"":c.reorderPoint}</td></tr>`;
+  }).join("") || `<tr><td colspan="6" class="muted">No cards match. Add stock with New Card, or clear the filters.</td></tr>`;
+  render(`
+  <h2>Stores</h2>
+  <div class="toolbar">
+    <input id="fq" placeholder="Search GSN, nomenclature, location" value="${esc(f.q)}" style="flex:1;min-width:180px">
+    <select id="fcls"><option value="">All classes</option>${clsOpts}</select>
+    <label style="margin:0;display:flex;align-items:center;gap:.3em"><input type="checkbox" id="flow" ${f.low?"checked":""}> Low stock</label>
+    <label style="margin:0;display:flex;align-items:center;gap:.3em"><input type="checkbox" id="farch" ${f.archived?"checked":""}> Show archived</label>
+    <button class="primary" onclick="go('newcard')">New Card</button>
+  </div>
+  <table><thead><tr><th>GSN</th><th>Nomenclature</th><th>On Hand</th><th>U/I</th><th>Location</th><th>Reorder Pt</th></tr></thead>
+  <tbody>${rows}</tbody></table>
+  <p class="muted">${cards.length} card(s) shown · ${S.cards.filter(c=>c.status==="ACTIVE").length} active in stores</p>`);
+  document.getElementById("fq").oninput = e=>{ storesFilter.q=e.target.value; Pages.stores(); placeCursorEnd(); };
+  document.getElementById("fcls").onchange = e=>{ storesFilter.cls=e.target.value; Pages.stores(); };
+  document.getElementById("flow").onchange = e=>{ storesFilter.low=e.target.checked; Pages.stores(); };
+  document.getElementById("farch").onchange = e=>{ storesFilter.archived=e.target.checked; Pages.stores(); };
+};
+function placeCursorEnd(){
+  const el = document.getElementById("fq");
+  if(el){ el.focus(); el.setSelectionRange(el.value.length, el.value.length); }
+}
+
+/* ---------------- NEW CARD ---------------- */
+Pages.newcard = function(){
+  if(S.classes.length===0){
+    render(`<h2>New Stock Card</h2><div class="panel">No classes exist yet. Establish at least one class first.
+      <p><button class="primary" onclick="go('classes')">Go to Classes</button></p></div>`);
+    return;
+  }
+  const clsOpts = S.classes.map(c=>`<option value="${esc(c.code)}">${esc(c.code)} · ${esc(c.description)}</option>`).join("");
+  const uoiOpts = QMCore.UOI.map(u=>`<option>${u}</option>`).join("");
+  render(`
+  <h2>New Stock Card</h2>
+  <div class="panel">
+    <div class="row">
+      <div><label for="nc-cls">Class</label><select id="nc-cls">${clsOpts}</select></div>
+      <div><label for="nc-uoi">Unit of Issue</label><select id="nc-uoi">${uoiOpts}</select></div>
+    </div>
+    <label for="nc-nom">Nomenclature (noun first, e.g. STANDOFF, HEX, M3 X 10MM, BRASS)</label>
+    <input id="nc-nom" style="width:100%">
+    <div class="row">
+      <div><label for="nc-loc">Bin Location (SITE/AREA/SHELF/BIN)</label><input id="nc-loc" placeholder="GSG/W2/S3/B07"></div>
+      <div><label for="nc-rp">Reorder Point (blank = never flag)</label><input id="nc-rp" type="number" min="0"></div>
+      <div><label for="nc-rq">Reorder Quantity</label><input id="nc-rq" type="number" min="0"></div>
+    </div>
+    <div class="row">
+      <div><label for="nc-src">Source / Vendor</label><input id="nc-src"></div>
+      <div><label for="nc-cost">Unit Cost (USD)</label><input id="nc-cost" type="number" min="0" step="0.01"></div>
+      <div><label for="nc-init">Initial Quantity On Hand</label><input id="nc-init" type="number" min="0" value="0"></div>
+    </div>
+    <label for="nc-notes">Notes</label><textarea id="nc-notes" rows="2" style="width:100%"></textarea>
+    <label for="nc-links">Datasheet / Reference Links (one per line)</label><textarea id="nc-links" rows="2" style="width:100%"></textarea>
+    <p><button class="primary" id="nc-save">File Stock Card</button> <button onclick="go('stores')">Cancel</button></p>
+  </div>`);
+  document.getElementById("nc-save").onclick = ()=>{
+    try{
+      const card = QMCore.createCard(S, {
+        classCode: v("nc-cls"), nomenclature: v("nc-nom"), unitOfIssue: v("nc-uoi"),
+        binLocation: v("nc-loc"), reorderPoint: v("nc-rp"), reorderQuantity: v("nc-rq"),
+        source: v("nc-src"), unitCost: v("nc-cost"), notes: v("nc-notes"), links: v("nc-links")
+      });
+      const init = Number(v("nc-init")||0);
+      if(init>0) QMCore.appendTx(S,"RECEIPT",card.gsn,init,{note:"Initial stock on card creation"});
+      persist(); toast("Filed "+card.gsn); go("card", card.gsn);
+    }catch(e){ toast(e.message); }
+  };
+};
+function v(id){ return document.getElementById(id).value; }
+
+/* ---------------- CARD DETAIL ---------------- */
+Pages.card = function(gsn){
+  const c = QMCore.findCard(S, gsn);
+  if(!c){ render(`<h2>Not Found</h2><p class="muted">No stock card for ${esc(gsn)}.</p>`); return; }
+  const q = QMCore.qtyOnHand(S, gsn);
+  const low = c.reorderPoint!=null && q<=c.reorderPoint;
+  const dead = QMCore.voidedIds(S);
+  const hist = S.transactions.filter(t=>t.gsn===gsn).slice().reverse().slice(0,25).map(t=>`
+    <tr><td>${esc(t.id)}</td><td>${dt(t.ts)}</td><td>${esc(t.type)}</td>
+    <td class="mono-num">${t.type==="VOID"?("voids "+esc(t.voids)):t.delta}</td>
+    <td>${esc(t.project)}</td><td>${dead.has(t.id)?'<span class="stamp r2" style="font-size:.7rem">VOID</span> ':""}${esc(t.note)}</td></tr>`).join("")
+    || `<tr><td colspan="6" class="muted">No transactions yet.</td></tr>`;
+  const links = c.links.split(/\n/).filter(x=>x.trim()).map(u=>`<div><a href="${esc(u.trim())}" target="_blank" rel="noopener">${esc(u.trim())}</a></div>`).join("");
+  render(`
+  <h2>${esc(c.gsn)}</h2>
+  <div class="stockcard" id="sc"><div class="inner">
+    <div class="face">
+      <div class="punch"></div>
+      <div class="gsnblock">GSN ${esc(c.gsn)}</div>
+      <div class="nomen">${esc(c.nomenclature)}</div>
+      <div class="cardgrid">
+        <div><b>On Hand</b><span class="${low?'low':'qty-ok'}" style="font-size:1.3rem">${q} ${esc(c.unitOfIssue)}</span></div>
+        <div><b>Bin Location</b>${esc(c.binLocation)}</div>
+        <div><b>Reorder Point</b>${c.reorderPoint==null?"none":c.reorderPoint}</div>
+        <div><b>Reorder Qty</b>${c.reorderQuantity==null?"":c.reorderQuantity}</div>
+        <div><b>Source</b>${esc(c.source)||"<span class='muted'>unknown</span>"}</div>
+        <div><b>Unit Cost</b>${money(c.unitCost)}</div>
+        <div><b>Filed</b>${dt(c.createdAt)}</div>
+        <div><b>Status</b>${esc(c.status)}</div>
+      </div>
+      <p style="margin-top:.9em">
+        ${low?'<span class="stamp '+stampRot()+'">Due In</span> ':""}
+        ${c.status==="ARCHIVED"?'<span class="stamp '+stampRot()+'">Surveyed Out</span>':""}
+      </p>
+    </div>
+    <div class="back">
+      <h3>Reverse of Card</h3>
+      <b class="muted" style="font-size:.75rem;text-transform:uppercase">Notes</b>
+      <p>${esc(c.notes)||"<span class='muted'>none</span>"}</p>
+      <b class="muted" style="font-size:.75rem;text-transform:uppercase">References</b>
+      ${links||"<p class='muted'>none</p>"}
+    </div>
+  </div></div>
+  <div class="toolbar">
+    <button onclick="document.getElementById('sc').classList.toggle('flipped')">Flip Card</button>
+    <button class="primary" onclick="txDialog('ISSUE','${esc(gsn)}')">Issue</button>
+    <button class="primary" onclick="txDialog('RECEIPT','${esc(gsn)}')">Receive</button>
+    <button onclick="txDialog('ADJUST','${esc(gsn)}')">Adjust</button>
+    <button onclick="txDialog('SURVEY','${esc(gsn)}')">Survey</button>
+    <button onclick="editCard('${esc(gsn)}')">Amend Card</button>
+    <button onclick="pinReq('${esc(gsn)}')">Pin to Requisition</button>
+    ${c.status==="ACTIVE"
+      ? `<button class="danger" onclick="archiveCard('${esc(gsn)}')">Archive</button>`
+      : `<button onclick="unarchiveCard('${esc(gsn)}')">Reactivate</button>`}
+  </div>
+  <h3>Recent Transactions</h3>
+  <table><thead><tr><th>ID</th><th>When</th><th>Type</th><th>Qty</th><th>Project</th><th>Note</th></tr></thead>
+  <tbody>${hist}</tbody></table>
+  <p><a href="#ledger">Full ledger →</a></p>`);
+};
+
+function pinReq(gsn){
+  if(!S.manualReq.includes(gsn)) S.manualReq.push(gsn);
+  persist(); toast(gsn+" pinned to requisition");
+}
+function archiveCard(gsn){
+  const c = QMCore.findCard(S,gsn);
+  if(QMCore.qtyOnHand(S,gsn)>0){ toast("Survey or issue remaining stock before archiving."); return; }
+  c.status="ARCHIVED"; persist(); toast(gsn+" archived"); Pages.card(gsn);
+}
+function unarchiveCard(gsn){
+  const c = QMCore.findCard(S,gsn);
+  c.status="ACTIVE"; persist(); toast(gsn+" reactivated"); Pages.card(gsn);
+}
+
+/* transaction dialog */
+function txDialog(type, gsn){
+  const c = QMCore.findCard(S,gsn);
+  const q = QMCore.qtyOnHand(S,gsn);
+  const isAdjust = type==="ADJUST";
+  const needNote = type==="ADJUST"||type==="SURVEY";
+  const old = document.getElementById("txdlg"); if(old) old.remove();
+  const d = document.createElement("dialog"); d.id="txdlg";
+  d.innerHTML = `
+    <h3>${type} · ${esc(gsn)}</h3>
+    <p class="muted">${esc(c.nomenclature)} · on hand ${q} ${esc(c.unitOfIssue)}</p>
+    <label for="tx-qty">${isAdjust?"Observed count (sets stock to this number)":"Quantity ("+esc(c.unitOfIssue)+")"}</label>
+    <input id="tx-qty" type="number" min="0" style="width:100%">
+    ${type==="ISSUE"?'<label for="tx-proj">Project (optional)</label><input id="tx-proj" list="projlist" style="width:100%"><datalist id="projlist">'+projectOptions()+'</datalist>':""}
+    <label for="tx-note">Note${needNote?" (required)":" (optional)"}</label>
+    <input id="tx-note" style="width:100%">
+    <p><button class="primary" id="tx-go">Log ${type}</button> <button id="tx-x">Cancel</button></p>`;
+  document.body.appendChild(d); d.showModal();
+  d.querySelector("#tx-x").onclick = ()=>d.close();
+  d.querySelector("#tx-go").onclick = ()=>{
+    try{
+      let delta = Number(d.querySelector("#tx-qty").value);
+      const note = d.querySelector("#tx-note").value;
+      const proj = type==="ISSUE" ? d.querySelector("#tx-proj").value : "";
+      if(isAdjust){
+        if(!Number.isFinite(delta) || delta<0) throw new Error("Observed count must be zero or more.");
+        if(delta===q) throw new Error("Observed equals on hand. Nothing to adjust.");
+        delta = delta - q;
+      }
+      QMCore.appendTx(S, type, gsn, delta, {note, project: proj});
+      persist(); d.close(); toast(type+" logged"); Pages.card(gsn);
+    }catch(e){ toast(e.message); }
+  };
+}
+function projectOptions(){
+  const set = new Set(S.transactions.map(t=>t.project).filter(Boolean));
+  return [...set].map(p=>`<option value="${esc(p)}">`).join("");
+}
+
+/* amend card (descriptive fields only; ledger untouched) */
+function editCard(gsn){
+  const c = QMCore.findCard(S,gsn);
+  const old = document.getElementById("eddlg"); if(old) old.remove();
+  const d = document.createElement("dialog"); d.id="eddlg";
+  d.innerHTML = `
+    <h3>Amend ${esc(gsn)}</h3>
+    <label>Nomenclature</label><input id="ed-nom" style="width:100%" value="${esc(c.nomenclature)}">
+    <label>Bin Location</label><input id="ed-loc" style="width:100%" value="${esc(c.binLocation)}">
+    <div class="row">
+      <div><label>Reorder Point</label><input id="ed-rp" type="number" min="0" value="${c.reorderPoint==null?"":c.reorderPoint}"></div>
+      <div><label>Reorder Qty</label><input id="ed-rq" type="number" min="0" value="${c.reorderQuantity==null?"":c.reorderQuantity}"></div>
+      <div><label>Unit Cost</label><input id="ed-cost" type="number" min="0" step="0.01" value="${c.unitCost==null?"":c.unitCost}"></div>
+    </div>
+    <label>Source / Vendor</label><input id="ed-src" style="width:100%" value="${esc(c.source)}">
+    <label>Notes</label><textarea id="ed-notes" rows="2" style="width:100%">${esc(c.notes)}</textarea>
+    <label>Links (one per line)</label><textarea id="ed-links" rows="2" style="width:100%">${esc(c.links)}</textarea>
+    <p><button class="primary" id="ed-go">Save Amendment</button> <button id="ed-x">Cancel</button></p>`;
+  document.body.appendChild(d); d.showModal();
+  d.querySelector("#ed-x").onclick = ()=>d.close();
+  d.querySelector("#ed-go").onclick = ()=>{
+    try{
+      const loc = d.querySelector("#ed-loc").value.trim().toUpperCase();
+      if(!QMCore.validLocation(loc)) throw new Error("Bin location must be SITE/AREA/SHELF/BIN.");
+      const nom = d.querySelector("#ed-nom").value.trim().toUpperCase();
+      if(!nom) throw new Error("Nomenclature is required.");
+      c.nomenclature=nom; c.binLocation=loc;
+      c.reorderPoint = d.querySelector("#ed-rp").value==="" ? null : Number(d.querySelector("#ed-rp").value);
+      c.reorderQuantity = d.querySelector("#ed-rq").value==="" ? null : Number(d.querySelector("#ed-rq").value);
+      c.unitCost = d.querySelector("#ed-cost").value==="" ? null : Number(d.querySelector("#ed-cost").value);
+      c.source = d.querySelector("#ed-src").value.trim();
+      c.notes = d.querySelector("#ed-notes").value;
+      c.links = d.querySelector("#ed-links").value;
+      persist(); d.close(); toast("Card amended"); Pages.card(gsn);
+    }catch(e){ toast(e.message); }
+  };
+}
+
+/* ---------------- LOCATIONS ---------------- */
+Pages.locations = function(prefix){
+  prefix = (prefix||"").toUpperCase();
+  const active = S.cards.filter(c=>c.status==="ACTIVE");
+  const depth = prefix ? prefix.split("/").length : 0;
+  const under = active.filter(c=>!prefix || c.binLocation.startsWith(prefix+"/") || c.binLocation===prefix);
+  // next-level branches
+  const branches = new Map();
+  for(const c of under){
+    const segs = c.binLocation.split("/");
+    if(segs.length > depth){
+      const b = segs.slice(0, depth+1).join("/");
+      branches.set(b, (branches.get(b)||0)+1);
+    }
+  }
+  const crumbs = ["<a href='#locations'>STORES</a>"];
+  if(prefix){
+    const segs = prefix.split("/");
+    segs.forEach((s,i)=>{
+      const p = segs.slice(0,i+1).join("/");
+      crumbs.push(`<a href="#locations/${encodeURIComponent(p)}">${esc(s)}</a>`);
+    });
+  }
+  const branchHtml = [...branches.entries()].sort().map(([b,n])=>
+    `<button onclick="go('locations','${esc(b)}')">${esc(b.split("/").pop())} <span class="tag">${n}</span></button>`).join(" ");
+  const here = prefix ? active.filter(c=>c.binLocation===prefix) : [];
+  const hereRows = here.map(c=>{
+    const q=QMCore.qtyOnHand(S,c.gsn);
+    return `<tr class="clickable" onclick="go('card','${esc(c.gsn)}')"><td>${esc(c.gsn)}</td><td>${esc(c.nomenclature)}</td><td class="mono-num">${q} ${esc(c.unitOfIssue)}</td></tr>`;
+  }).join("");
+  render(`
+  <h2>Locations</h2>
+  <p>${crumbs.join(" / ")}</p>
+  <div class="panel">
+    ${branchHtml || (prefix?"":"<span class='muted'>No stock filed yet. Locations appear as cards are filed.</span>")}
+    ${prefix && !branchHtml && !hereRows ? "<span class='muted'>Nothing stowed under this location.</span>":""}
+  </div>
+  ${hereRows?`<h3>Bin Contents · ${esc(prefix)}</h3>
+    <table><thead><tr><th>GSN</th><th>Nomenclature</th><th>On Hand</th></tr></thead><tbody>${hereRows}</tbody></table>`:""}
+  ${prefix && QMCore.validLocation(prefix)?`<p><button onclick="startMusterLoc('${esc(prefix)}')">Muster this bin</button></p>`:
+    prefix?`<p><button onclick="startMusterLoc('${esc(prefix)}')">Muster everything under ${esc(prefix)}</button></p>`:""}`);
+};
+function startMusterLoc(pfx){
+  try{ QMCore.openMuster(S,"location",pfx); persist(); go("muster"); }
+  catch(e){ toast(e.message); }
+}
+
+/* ---------------- MUSTER ---------------- */
+Pages.muster = function(arg){
+  if(arg && arg.startsWith("report:")){ return musterReport(arg.slice(7)); }
+  const open = QMCore.openMusterOf(S);
+  if(!open) return musterHome();
+  const line = QMCore.nextUnresolvedLine(open);
+  if(!line) return musterCloseout(open);
+  const c = QMCore.findCard(S, line.gsn);
+  const done = open.lines.filter(l=>l.result!==null).length;
+  render(`
+  <h2>Muster ${esc(open.id)} in progress</h2>
+  <p class="muted">Scope: ${esc(open.scopeType)} ${esc(open.scopeValue)} · line ${done+1} of ${open.lines.length} · accuracy so far ${QMCore.musterAccuracy(open)}%</p>
+  <div class="panel muster-card">
+    <div class="gsnblock" style="font-family:var(--font-display);font-size:1.4rem;color:var(--accent)">${esc(c.gsn)}</div>
+    <div class="nomen" style="border:none">${esc(c.nomenclature)}</div>
+    <div class="muted">${esc(c.binLocation)}</div>
+    <div class="bigqty">${line.expected} <span style="font-size:1.2rem">${esc(c.unitOfIssue)}</span></div>
+    <div class="muted">expected on hand</div>
+    <div class="muster-actions">
+      <button class="primary" onclick="musterMark('${esc(line.gsn)}','SIGHTED')">Sighted</button>
+      <button onclick="musterAdjust('${esc(line.gsn)}',${line.expected})">Adjust Count</button>
+      <button class="danger" onclick="musterMark('${esc(line.gsn)}','NOT_SIGHTED')">Not Sighted</button>
+    </div>
+  </div>
+  <p class="muted" style="text-align:center">Muster can be paused at any time. Progress is saved. Resume from the Muster page.</p>`);
+};
+
+function musterMark(gsn, result){
+  const m = QMCore.openMusterOf(S);
+  try{ QMCore.recordLine(S,m,gsn,result); persist(); Pages.muster(); }
+  catch(e){ toast(e.message); }
+}
+function musterAdjust(gsn, expected){
+  const m = QMCore.openMusterOf(S);
+  const old = document.getElementById("madlg"); if(old) old.remove();
+  const d = document.createElement("dialog"); d.id="madlg";
+  d.innerHTML = `<h3>Adjust · ${esc(gsn)}</h3>
+    <p class="muted">Expected ${expected}. Enter what you actually count.</p>
+    <label>Observed count</label><input id="ma-q" type="number" min="0" style="width:100%">
+    <label>Note (required)</label><input id="ma-n" style="width:100%">
+    <p><button class="primary" id="ma-go">Record</button> <button id="ma-x">Cancel</button></p>`;
+  document.body.appendChild(d); d.showModal();
+  d.querySelector("#ma-x").onclick=()=>d.close();
+  d.querySelector("#ma-go").onclick=()=>{
+    try{
+      QMCore.recordLine(S,m,gsn,"ADJUSTED",Number(d.querySelector("#ma-q").value),d.querySelector("#ma-n").value);
+      persist(); d.close(); Pages.muster();
+    }catch(e){ toast(e.message); }
+  };
+}
+
+function musterCloseout(m){
+  const ns = m.lines.filter(l=>l.result==="NOT_SIGHTED");
+  const nsHtml = ns.map(l=>{
+    const c = QMCore.findCard(S,l.gsn);
+    return `<div class="panel">
+      <b>${esc(l.gsn)}</b> ${esc(c.nomenclature)} · expected ${l.expected}
+      <label style="margin-top:.4em"><input type="radio" name="sv-${esc(l.gsn)}" value="survey" checked> Survey (write off all ${QMCore.qtyOnHand(S,l.gsn)} on hand)</label>
+      <label><input type="radio" name="sv-${esc(l.gsn)}" value="skip"> Skip for now</label>
+      <label>Note</label><input id="svn-${esc(l.gsn)}" style="width:100%">
+    </div>`;
+  }).join("");
+  const adj = m.lines.filter(l=>l.result==="ADJUSTED");
+  render(`
+  <h2>Muster ${esc(m.id)} · Close-out</h2>
+  <p>All lines recorded. Accuracy: <b>${QMCore.musterAccuracy(m)}%</b> ·
+     ${m.lines.filter(l=>l.result==="SIGHTED").length} sighted ·
+     ${adj.length} adjusted · ${ns.length} not sighted</p>
+  ${ns.length?`<h3>Not Sighted · decide disposition</h3>${nsHtml}`:""}
+  <p><button class="primary" onclick="musterFinish('${esc(m.id)}')">Close Muster and File Report</button></p>`);
+}
+function musterFinish(id){
+  const m = S.musters.find(x=>x.id===id);
+  const decisions = {};
+  for(const l of m.lines.filter(x=>x.result==="NOT_SIGHTED")){
+    const pick = document.querySelector(`input[name="sv-${l.gsn}"]:checked`);
+    decisions[l.gsn] = { survey: pick && pick.value==="survey",
+                         note: (document.getElementById("svn-"+l.gsn)||{}).value||"" };
+  }
+  try{ QMCore.closeMuster(S,m,decisions); persist(); toast("Muster closed"); go("muster","report:"+m.id); }
+  catch(e){ toast(e.message); }
+}
+
+function musterHome(){
+  const clsOpts = S.classes.map(c=>`<option value="${esc(c.code)}">${esc(c.code)}</option>`).join("");
+  const past = S.musters.filter(m=>m.status==="CLOSED").slice().reverse().map(m=>
+    `<tr class="clickable" onclick="go('muster','report:${esc(m.id)}')">
+     <td>${esc(m.id)}</td><td>${dt(m.closedAt)}</td><td>${esc(m.scopeType)} ${esc(m.scopeValue)}</td>
+     <td class="mono-num">${m.lines.length}</td><td class="mono-num">${m.accuracy}%</td></tr>`).join("")
+    || `<tr><td colspan="5" class="muted">No musters filed yet. A clean storeroom starts with the first count.</td></tr>`;
+  render(`
+  <h2>Muster</h2>
+  <div class="panel">
+    <h3>Open a Muster</h3>
+    <div class="row">
+      <div><label for="mu-loc">By location prefix</label><input id="mu-loc" placeholder="GSG or GSG/W2"></div>
+      <div><button class="primary" onclick="musterOpen('location')" style="margin-top:1.4em">Muster Location</button></div>
+      <div><label for="mu-cls">By class</label><select id="mu-cls">${clsOpts||"<option value=''>none</option>"}</select></div>
+      <div><button class="primary" onclick="musterOpen('class')" style="margin-top:1.4em">Muster Class</button></div>
+      <div><button onclick="musterOpen('all')" style="margin-top:1.4em">Muster All Stores</button></div>
+    </div>
+    <p class="muted">One muster may be open at a time. Progress saves automatically; pause and resume freely.</p>
+  </div>
+  <h3>Filed Muster Reports</h3>
+  <table><thead><tr><th>ID</th><th>Closed</th><th>Scope</th><th>Lines</th><th>Accuracy</th></tr></thead>
+  <tbody>${past}</tbody></table>`);
+}
+function musterOpen(type){
+  try{
+    const val = type==="location" ? v("mu-loc") : type==="class" ? v("mu-cls") : "";
+    QMCore.openMuster(S,type,val); persist(); Pages.muster();
+  }catch(e){ toast(e.message); }
+}
+
+function musterReport(id){
+  const m = S.musters.find(x=>x.id===id);
+  if(!m){ render("<h2>Report not found</h2>"); return; }
+  const rows = m.lines.map(l=>`<tr><td>${esc(l.gsn)}</td><td class="mono-num">${l.expected}</td>
+    <td class="mono-num">${l.observed==null?"":l.observed}</td><td>${esc(l.result)}</td><td>${esc(l.note)}</td></tr>`).join("");
+  render(`
+  <h2>Muster Report ${esc(m.id)}</h2>
+  <div class="report">
+    <h3 style="text-align:center">Green Shoe Garage · Supply Department<br>Report of Physical Inventory</h3>
+    <p>Scope: ${esc(m.scopeType)} ${esc(m.scopeValue)}<br>
+       Opened: ${dt(m.openedAt)} · Closed: ${dt(m.closedAt)}<br>
+       Lines mustered: ${m.lines.length} · Inventory accuracy:
+       <span class="stamp ${m.accuracy>=95?'ok':''} ${stampRot()}">${m.accuracy}%</span></p>
+    <table><thead><tr><th>GSN</th><th>Expected</th><th>Observed</th><th>Result</th><th>Remarks</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+    <div class="sigline">Supply Officer</div>
+  </div>
+  <p><button onclick="window.print()">Print Report</button> <button onclick="go('muster')">Back to Muster</button></p>`);
+}
+
+/* ---------------- REQUISITION ---------------- */
+Pages.requisition = function(){
+  const lines = QMCore.requisitionLines(S);
+  const byVendor = new Map();
+  for(const l of lines){
+    const key = l.card.source || "UNASSIGNED VENDOR";
+    if(!byVendor.has(key)) byVendor.set(key, []);
+    byVendor.get(key).push(l);
+  }
+  let html = "";
+  for(const [vendor, ls] of [...byVendor.entries()].sort()){
+    const rows = ls.map(l=>`
+      <tr><td>${esc(l.card.gsn)}${l.manual?' <span class="tag">PINNED</span>':""}</td>
+      <td>${esc(l.card.nomenclature)}</td>
+      <td class="mono-num low">${l.onHand}</td>
+      <td class="mono-num">${l.card.reorderPoint==null?"":l.card.reorderPoint}</td>
+      <td class="mono-num">${l.buy}</td>
+      <td class="mono-num">${l.est==null?"":money(l.est)}</td>
+      <td><button onclick="receiveDialog('${esc(l.card.gsn)}')">Receive</button>
+          ${l.manual?`<button onclick="unpinReq('${esc(l.card.gsn)}')">Unpin</button>`:""}</td></tr>`).join("");
+    html += `<h3>${esc(vendor)}</h3>
+      <table><thead><tr><th>GSN</th><th>Nomenclature</th><th>On Hand</th><th>Reorder Pt</th><th>Buy</th><th>Est Cost</th><th></th></tr></thead>
+      <tbody>${rows}</tbody></table>`;
+  }
+  const est = lines.reduce((a,l)=>a+(l.est||0),0);
+  render(`
+  <h2>Requisition</h2>
+  <p class="muted">Items at or below reorder point appear here automatically. Receiving stock clears them when the count recovers.</p>
+  <div class="toolbar">
+    <button onclick="exportReq('txt')">Export as Text</button>
+    <button onclick="exportReq('csv')">Export as CSV</button>
+    <span class="muted">${lines.length} line(s) · estimated ${money(est)}</span>
+  </div>
+  ${html || `<div class="panel muted">Nothing due in. Stores are sufficient, or reorder points are unset.</div>`}`);
+};
+function unpinReq(gsn){
+  S.manualReq = S.manualReq.filter(g=>g!==gsn);
+  persist(); Pages.requisition();
+}
+function receiveDialog(gsn){
+  const c = QMCore.findCard(S,gsn);
+  const old = document.getElementById("rvdlg"); if(old) old.remove();
+  const d = document.createElement("dialog"); d.id="rvdlg";
+  d.innerHTML = `<h3>Receive · ${esc(gsn)}</h3>
+    <p class="muted">${esc(c.nomenclature)}</p>
+    <label>Quantity received (${esc(c.unitOfIssue)})</label>
+    <input id="rv-q" type="number" min="1" value="${c.reorderQuantity!=null?c.reorderQuantity:""}" style="width:100%">
+    <label>Confirm bin location</label>
+    <input id="rv-loc" value="${esc(c.binLocation)}" style="width:100%">
+    <label>Note (optional)</label><input id="rv-n" style="width:100%">
+    <p><button class="primary" id="rv-go">Log Receipt</button> <button id="rv-x">Cancel</button></p>`;
+  document.body.appendChild(d); d.showModal();
+  d.querySelector("#rv-x").onclick=()=>d.close();
+  d.querySelector("#rv-go").onclick=()=>{
+    try{
+      const loc = d.querySelector("#rv-loc").value.trim().toUpperCase();
+      if(!QMCore.validLocation(loc)) throw new Error("Bin location must be SITE/AREA/SHELF/BIN.");
+      c.binLocation = loc;
+      QMCore.appendTx(S,"RECEIPT",gsn,Number(d.querySelector("#rv-q").value),{note:d.querySelector("#rv-n").value});
+      S.manualReq = S.manualReq.filter(g=>g!==gsn);
+      persist(); d.close(); toast("Receipt logged"); Pages.requisition();
+    }catch(e){ toast(e.message); }
+  };
+}
+function exportReq(fmt){
+  const lines = QMCore.requisitionLines(S);
+  if(lines.length===0){ toast("Nothing to export."); return; }
+  let out, name, mime;
+  if(fmt==="csv"){
+    out = "GSN,Nomenclature,Vendor,On Hand,Reorder Point,Buy,Unit,Est Cost\n" +
+      lines.map(l=>[l.card.gsn, csvq(l.card.nomenclature), csvq(l.card.source), l.onHand,
+        l.card.reorderPoint==null?"":l.card.reorderPoint, l.buy, l.card.unitOfIssue,
+        l.est==null?"":l.est.toFixed(2)].join(",")).join("\n");
+    name = "requisition-"+today()+".csv"; mime="text/csv";
+  } else {
+    out = "GREEN SHOE GARAGE REQUISITION · "+today()+"\n" + "=".repeat(44) + "\n";
+    const byVendor = {};
+    for(const l of lines) (byVendor[l.card.source||"UNASSIGNED"] ||= []).push(l);
+    for(const vend of Object.keys(byVendor).sort()){
+      out += "\n"+vend+"\n"+"-".repeat(vend.length)+"\n";
+      for(const l of byVendor[vend])
+        out += `  ${l.card.gsn}  ${l.card.nomenclature}  buy ${l.buy||"?"} ${l.card.unitOfIssue} (on hand ${l.onHand})\n`;
+    }
+    name = "requisition-"+today()+".txt"; mime="text/plain";
+  }
+  download(name, out, mime);
+}
+function csvq(s){ s=String(s==null?"":s); return /[",\n]/.test(s) ? '"'+s.replace(/"/g,'""')+'"' : s; }
+function today(){ return new Date().toISOString().slice(0,10); }
+function download(name, text, mime){
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text],{type:mime}));
+  a.download = name; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 5000);
+}
+
+/* ---------------- LEDGER ---------------- */
+Pages.ledger = function(){
+  const dead = QMCore.voidedIds(S);
+  const rows = S.transactions.slice().reverse().map(t=>`
+    <tr><td>${esc(t.id)}</td><td>${dt(t.ts)}</td><td>${esc(t.type)}</td>
+    <td><a href="#card/${encodeURIComponent(t.gsn)}">${esc(t.gsn)}</a></td>
+    <td class="mono-num">${t.type==="VOID"?("voids "+esc(t.voids)):t.delta}</td>
+    <td>${esc(t.project)}</td>
+    <td>${dead.has(t.id)?'<span class="stamp r2" style="font-size:.7rem">VOID</span> ':""}${esc(t.note)}</td>
+    <td>${(t.type!=="VOID" && !dead.has(t.id))?`<button onclick="voidDialog('${esc(t.id)}')">Void</button>`:""}</td></tr>`).join("")
+    || `<tr><td colspan="8" class="muted">The ledger is empty. Every count starts at zero.</td></tr>`;
+  render(`
+  <h2>Ledger</h2>
+  <p class="muted">Append-only. Corrections are made by voiding a transaction, which preserves both records.</p>
+  <table><thead><tr><th>ID</th><th>When</th><th>Type</th><th>GSN</th><th>Qty</th><th>Project</th><th>Note</th><th></th></tr></thead>
+  <tbody>${rows}</tbody></table>`);
+};
+function voidDialog(id){
+  const old = document.getElementById("vddlg"); if(old) old.remove();
+  const d = document.createElement("dialog"); d.id="vddlg";
+  const t = S.transactions.find(x=>x.id===id);
+  d.innerHTML = `<h3>Void ${esc(id)}</h3>
+    <p class="muted">${esc(t.type)} of ${t.delta} on ${esc(t.gsn)}. This appends a VOID record; nothing is erased.</p>
+    <label>Reason (required)</label><input id="vd-n" style="width:100%">
+    <p><button class="danger" id="vd-go">Append Void</button> <button id="vd-x">Cancel</button></p>`;
+  document.body.appendChild(d); d.showModal();
+  d.querySelector("#vd-x").onclick=()=>d.close();
+  d.querySelector("#vd-go").onclick=()=>{
+    try{
+      QMCore.appendTx(S,"VOID",null,0,{voids:id, note:d.querySelector("#vd-n").value});
+      persist(); d.close(); toast(id+" voided"); Pages.ledger();
+    }catch(e){ toast(e.message); }
+  };
+}
+
+/* ---------------- CLASSES ---------------- */
+const STARTER_CLASSES = [
+  ["RES","Resistors"],["CAP","Capacitors"],["SEMI","Semiconductors and ICs"],
+  ["CONN","Connectors and headers"],["WIRE","Wire and cable"],["FAST","Fasteners"],
+  ["ADHV","Adhesives and sealants"],["LUMBR","Lumber and sheet goods"],
+  ["FIN","Finishes and paint"],["ABRSV","Abrasives"],["FILM","Film and photo chemistry"],
+  ["RADIO","Radio and antenna parts"],["BATT","Batteries and power"],["ENCL","Enclosures and tins"],
+  ["SAFE","Safety and PPE"],["CONS","Shop consumables"]
+];
+Pages.classes = function(){
+  const rows = S.classes.map(c=>`<tr><td>${esc(c.code)}</td><td>${esc(c.description)}</td>
+    <td class="mono-num">${c.nextSeq-1}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="muted">No classes established.</td></tr>`;
+  render(`
+  <h2>Classes</h2>
+  <p class="muted">Classes are the taxonomy behind every GSN. Codes are permanent; sequence numbers are never reused.</p>
+  <div class="panel">
+    <div class="row">
+      <div><label for="cl-code">Code (2 to 8 letters or digits)</label><input id="cl-code" placeholder="FAST"></div>
+      <div style="flex:2"><label for="cl-desc">Description</label><input id="cl-desc" placeholder="Fasteners" style="width:100%"></div>
+      <div><button class="primary" onclick="classAdd()" style="margin-top:1.4em">Establish Class</button></div>
+    </div>
+    ${S.classes.length===0?`<p><button onclick="classSeed()">Seed Starter Taxonomy (16 classes)</button></p>`:""}
+  </div>
+  <table><thead><tr><th>Code</th><th>Description</th><th>Cards Issued</th></tr></thead><tbody>${rows}</tbody></table>`);
+};
+function classAdd(){
+  try{ QMCore.addClass(S, v("cl-code"), v("cl-desc")); persist(); toast("Class established"); Pages.classes(); }
+  catch(e){ toast(e.message); }
+}
+function classSeed(){
+  let n=0;
+  for(const [code,desc] of STARTER_CLASSES){
+    try{ QMCore.addClass(S,code,desc); n++; }catch(e){}
+  }
+  persist(); toast(n+" classes established"); Pages.classes();
+}
+
+/* ---------------- MANIFEST (export/import) ---------------- */
+Pages.manifest = function(){
+  render(`
+  <h2>Manifest</h2>
+  <div class="panel">
+    <h3>Export</h3>
+    <p class="muted">Full state as JSON: classes, cards, ledger, musters. Your data, your file.</p>
+    <button class="primary" onclick="exportAll()">Export JSON</button>
+  </div>
+  <div class="panel">
+    <h3>Import</h3>
+    <p class="muted">Replaces everything in this browser with the imported file. Export first if in doubt.</p>
+    <input type="file" id="imp-file" accept=".json,application/json">
+    <p><button class="danger" onclick="importAll()">Import and Replace</button></p>
+  </div>
+  <div class="panel">
+    <h3>Storage</h3>
+    <p class="muted">${Store.memoryOnly()
+      ? "Browser storage is unavailable. Data lives in memory only for this session. Export before closing."
+      : "Data persists in this browser via local storage. Export regularly for a proper backup."}</p>
+  </div>`);
+};
+function exportAll(){
+  download("quartermaster-manifest-"+today()+".json", JSON.stringify(S,null,1), "application/json");
+}
+function importAll(){
+  const f = document.getElementById("imp-file").files[0];
+  if(!f){ toast("Choose a file first."); return; }
+  const r = new FileReader();
+  r.onload = ()=>{
+    try{
+      const s = JSON.parse(r.result);
+      if(!s || s.schema!==1 || !Array.isArray(s.transactions)) throw new Error("Not a QUARTERMASTER schema 1 manifest.");
+      S = s; persist(); toast("Manifest imported"); go("stores"); route();
+    }catch(e){ toast("Import failed: "+e.message); }
+  };
+  r.readAsText(f);
+}
+
+/* ---------------- ABOUT ---------------- */
+Pages.about = function(){
+  render(`
+  <h2>About</h2>
+  <div class="panel">
+    <p><b>QUARTERMASTER</b> · Field Instrument No. 065 · v${QM_VERSION}</p>
+    <p>Workshop stores and inventory on the supply department model. The transaction
+       ledger is the source of truth; counts are a projection. Sighted, counted, stowed.</p>
+    <p>Local-first. No accounts, no servers, no telemetry. Export your manifest from
+       the Manifest page whenever you want your data in hand.</p>
+    <p>License: GPL-3.0</p>
+    <p><a href="mailto:feedback@greenshoegarage.com?subject=QUARTERMASTER%20FI-065%20v${QM_VERSION}%20Feedback">Send feedback</a>
+       · Green Shoe Garage</p>
+    <p class="muted">Debug logging: add ?debug=1 to the URL.</p>
+  </div>`);
+};
+
+/* ---------------- TEST HARNESS ---------------- */
+Pages.tests = function(){
+  const results = runTests();
+  const rows = results.map(r=>`<tr><td class="${r.pass?'testpass':'testfail'}">${r.pass?"PASS":"FAIL"}</td>
+    <td>${esc(r.name)}</td><td>${esc(r.detail||"")}</td></tr>`).join("");
+  const fails = results.filter(r=>!r.pass).length;
+  render(`
+  <h2>Test Harness</h2>
+  <p>${fails===0?'<span class="stamp ok '+stampRot()+'">All Tests Pass</span>':'<span class="stamp '+stampRot()+'">'+fails+' Failing</span>'}
+     <span class="muted"> ${results.length} tests run against an isolated state. Live data untouched.</span></p>
+  <table><thead><tr><th>Result</th><th>Test</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table>`);
+};
+
+function runTests(){
+  const T = [];
+  function test(name, fn){
+    try{ fn(); T.push({name, pass:true}); }
+    catch(e){ T.push({name, pass:false, detail:e.message}); }
+  }
+  function assert(cond, msg){ if(!cond) throw new Error(msg||"assertion failed"); }
+  function expectThrow(fn, msg){
+    try{ fn(); }catch(e){ return; }
+    throw new Error(msg||"expected an error, none thrown");
+  }
+  function fixture(){
+    const s = QMCore.blankState();
+    QMCore.addClass(s,"FAST","Fasteners");
+    QMCore.addClass(s,"RES","Resistors");
+    return s;
+  }
+
+  test("GSN assignment pads and increments", ()=>{
+    const s = fixture();
+    assert(QMCore.assignGsn(s,"FAST")==="FAST-0001");
+    assert(QMCore.assignGsn(s,"FAST")==="FAST-0002");
+    assert(QMCore.assignGsn(s,"RES")==="RES-0001");
+  });
+  test("GSN sequences never reused after archive", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    c.status="ARCHIVED";
+    const c2 = QMCore.createCard(s,{classCode:"FAST",nomenclature:"Y",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B02"});
+    assert(c.gsn==="FAST-0001" && c2.gsn==="FAST-0002","sequence reuse detected");
+  });
+  test("Duplicate class rejected", ()=>{
+    const s = fixture();
+    expectThrow(()=>QMCore.addClass(s,"FAST","again"));
+  });
+  test("Location format enforced", ()=>{
+    const s = fixture();
+    expectThrow(()=>QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"garage shelf 3"}));
+    assert(QMCore.validLocation("GSG/W2/S3/B07"));
+    assert(!QMCore.validLocation("GSG/W2/S3"));
+  });
+  test("Receipt and issue project correctly", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",c.gsn,10,{});
+    QMCore.appendTx(s,"ISSUE",c.gsn,3,{project:"VIVARIUM"});
+    assert(QMCore.qtyOnHand(s,c.gsn)===7,"expected 7, got "+QMCore.qtyOnHand(s,c.gsn));
+  });
+  test("Issue beyond on-hand blocked", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",c.gsn,2,{});
+    expectThrow(()=>QMCore.appendTx(s,"ISSUE",c.gsn,5,{}));
+  });
+  test("ADJUST and SURVEY require notes", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",c.gsn,5,{});
+    expectThrow(()=>QMCore.appendTx(s,"ADJUST",c.gsn,2,{}));
+    expectThrow(()=>QMCore.appendTx(s,"SURVEY",c.gsn,-1,{}));
+    QMCore.appendTx(s,"ADJUST",c.gsn,2,{note:"found more"});
+    assert(QMCore.qtyOnHand(s,c.gsn)===7);
+  });
+  test("VOID nullifies a transaction and keeps both records", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",c.gsn,10,{});
+    const bad = QMCore.appendTx(s,"ISSUE",c.gsn,4,{});
+    QMCore.appendTx(s,"VOID",null,0,{voids:bad.id, note:"fat finger"});
+    assert(QMCore.qtyOnHand(s,c.gsn)===10,"void did not restore quantity");
+    assert(s.transactions.length===3,"records were erased");
+  });
+  test("Double void rejected; voiding a void rejected", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",c.gsn,10,{});
+    const t = QMCore.appendTx(s,"ISSUE",c.gsn,2,{});
+    const vd = QMCore.appendTx(s,"VOID",null,0,{voids:t.id, note:"x"});
+    expectThrow(()=>QMCore.appendTx(s,"VOID",null,0,{voids:t.id, note:"again"}));
+    expectThrow(()=>QMCore.appendTx(s,"VOID",null,0,{voids:vd.id, note:"meta"}));
+  });
+  test("Void that would drive stock negative rejected", ()=>{
+    const s = fixture();
+    const c = QMCore.createCard(s,{classCode:"FAST",nomenclature:"X",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    const rec = QMCore.appendTx(s,"RECEIPT",c.gsn,5,{});
+    QMCore.appendTx(s,"ISSUE",c.gsn,5,{});
+    expectThrow(()=>QMCore.appendTx(s,"VOID",null,0,{voids:rec.id, note:"x"}));
+  });
+  test("Muster: single open, full walk, accuracy math", ()=>{
+    const s = fixture();
+    const a = QMCore.createCard(s,{classCode:"FAST",nomenclature:"A",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    const b = QMCore.createCard(s,{classCode:"FAST",nomenclature:"B",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B02"});
+    const cc = QMCore.createCard(s,{classCode:"FAST",nomenclature:"C",unitOfIssue:"EA",binLocation:"GSG/W2/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",a.gsn,10,{});
+    QMCore.appendTx(s,"RECEIPT",b.gsn,4,{});
+    QMCore.appendTx(s,"RECEIPT",cc.gsn,2,{});
+    const m = QMCore.openMuster(s,"location","GSG/W1");
+    assert(m.lines.length===2,"scope filter wrong");
+    expectThrow(()=>QMCore.openMuster(s,"all"),"second open muster allowed");
+    QMCore.recordLine(s,m,a.gsn,"SIGHTED");
+    QMCore.recordLine(s,m,b.gsn,"ADJUSTED",3,"one missing");
+    assert(QMCore.qtyOnHand(s,b.gsn)===3,"muster adjust did not post");
+    assert(QMCore.musterAccuracy(m)===50,"accuracy math wrong: "+QMCore.musterAccuracy(m));
+    QMCore.closeMuster(s,m,{});
+    assert(m.status==="CLOSED" && m.accuracy===50);
+  });
+  test("Muster close-out survey writes off not-sighted stock", ()=>{
+    const s = fixture();
+    const a = QMCore.createCard(s,{classCode:"RES",nomenclature:"A",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",a.gsn,6,{});
+    const m = QMCore.openMuster(s,"class","RES");
+    QMCore.recordLine(s,m,a.gsn,"NOT_SIGHTED");
+    QMCore.closeMuster(s,m,{[a.gsn]:{survey:true, note:"gone"}});
+    assert(QMCore.qtyOnHand(s,a.gsn)===0,"survey did not zero stock");
+    assert(s.transactions.some(t=>t.type==="SURVEY"),"no survey transaction");
+  });
+  test("Close with unrecorded lines rejected", ()=>{
+    const s = fixture();
+    const a = QMCore.createCard(s,{classCode:"RES",nomenclature:"A",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",a.gsn,1,{});
+    const m = QMCore.openMuster(s,"all");
+    expectThrow(()=>QMCore.closeMuster(s,m,{}));
+  });
+  test("Requisition flags at and below reorder point, honors pins", ()=>{
+    const s = fixture();
+    const a = QMCore.createCard(s,{classCode:"FAST",nomenclature:"A",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01",reorderPoint:5,reorderQuantity:20,unitCost:0.10});
+    const b = QMCore.createCard(s,{classCode:"FAST",nomenclature:"B",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B02",reorderPoint:5});
+    QMCore.appendTx(s,"RECEIPT",a.gsn,5,{});
+    QMCore.appendTx(s,"RECEIPT",b.gsn,50,{});
+    let lines = QMCore.requisitionLines(s);
+    assert(lines.length===1 && lines[0].card.gsn===a.gsn,"threshold wrong");
+    assert(lines[0].est===2,"estimated cost wrong: "+lines[0].est);
+    s.manualReq.push(b.gsn);
+    lines = QMCore.requisitionLines(s);
+    assert(lines.length===2 && lines.some(l=>l.manual),"manual pin ignored");
+  });
+  test("Ledger is append-only in practice: qty derives from history", ()=>{
+    const s = fixture();
+    const a = QMCore.createCard(s,{classCode:"FAST",nomenclature:"A",unitOfIssue:"EA",binLocation:"GSG/W1/S1/B01"});
+    QMCore.appendTx(s,"RECEIPT",a.gsn,8,{});
+    QMCore.appendTx(s,"ISSUE",a.gsn,2,{});
+    QMCore.appendTx(s,"ADJUST",a.gsn,1,{note:"found one"});
+    const replay = s.transactions.filter(t=>t.type!=="VOID").reduce((q,t)=>q+t.delta,0);
+    assert(replay===QMCore.qtyOnHand(s,a.gsn) && replay===7,"projection mismatch");
+  });
+
+  return T;
+}
+
+/* ---------------- boot ---------------- */
+(function init(){
+  document.getElementById("verFoot").textContent = QM_VERSION;
+  if(Store.memoryOnly()) document.getElementById("storageNote").textContent = "MEMORY ONLY · EXPORT BEFORE CLOSING";
+  const themes = ["night","day","contrast"];
+  let theme = "night";
+  try{ theme = localStorage.getItem("qm-theme") || "night"; }catch(e){}
+  if(!themes.includes(theme)) theme="night";
+  document.documentElement.setAttribute("data-theme", theme==="night"?"":theme);
+  document.getElementById("themeBtn").onclick = ()=>{
+    theme = themes[(themes.indexOf(theme)+1)%themes.length];
+    document.documentElement.setAttribute("data-theme", theme==="night"?"":theme);
+    try{ localStorage.setItem("qm-theme", theme); }catch(e){}
+    toast("Theme: "+theme);
+  };
+  document.getElementById("burger").onclick = ()=>
+    document.getElementById("nav").classList.toggle("collapsed");
+  dbg("QUARTERMASTER boot", QM_VERSION, "cards:", S.cards.length, "tx:", S.transactions.length);
+  route();
+})();
+</script>
+</body>
+</html>
