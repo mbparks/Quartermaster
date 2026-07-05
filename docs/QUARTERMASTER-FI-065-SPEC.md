@@ -2,10 +2,10 @@
 ## Field Instrument No. 065
 ### Workshop Stores and Inventory
 
-**Document revision:** 0.1 (draft for review)
-**Status:** Pre-development specification
+**Document revision:** 1.0 (as built)
+**Status:** Matches shipped release v1.0.0 (2026-07-05)
 **Author:** M.B. Parks, Green Shoe Garage
-**Motto candidate:** "Sighted, counted, stowed."
+**Motto:** "Sighted, counted, stowed."
 
 ---
 
@@ -40,7 +40,9 @@ The transaction ledger is the source of truth. Quantity on hand for any stock ca
 - The ledger is append-only. Transactions are never edited or hard-deleted.
 - Corrections are made by appending a reversing or superseding transaction that references the original by ID (soft-delete via VOID transaction type, which nullifies a prior transaction's effect while preserving both records).
 - Every transaction carries: ID, timestamp, type, GSN, quantity delta, optional project tag, optional note, and optional reference to a voided transaction.
-- ADJUST and SURVEY transactions require a note.
+- ADJUST and SURVEY transactions require a note. VOID transactions require a note.
+- Guards enforced as built: ISSUE and SURVEY cannot drive projected stock negative; a VOID is rejected if nullifying its target would drive projected stock negative; a VOID cannot target another VOID; a transaction can be voided only once.
+- Archiving a stock card requires zero quantity on hand (issue or survey the remainder first). Archived cards are hidden by default and never deleted.
 
 ### 3.3 Entities
 
@@ -157,10 +159,15 @@ Musters can be paused and resumed. Only one muster open at a time in v1.0.
 - README updated each revision, including Known Limitations section.
 - Blog post draft accompanies each release.
 
-## 11. Open Questions
+## 11. Decisions and Open Questions
 
-1. Should classes be seeded with a starter taxonomy on first run, or begin empty?
-2. Nomenclature discipline: enforce noun-first style with a hint, or leave entirely freeform?
+### Resolved in v1.0.0
+
+1. Starter taxonomy: classes begin empty. A one-click "Seed Starter Taxonomy" action (16 classes) is offered on the Classes page only while no classes exist.
+2. Nomenclature discipline: freeform, with a noun-first hint in the field label. Input is uppercased automatically; the style is encouraged, not enforced.
+
+### Still open
+
 3. Muster cadence reminders: in-scope for v1.x, or does QUARTERMASTER stay silent and let the owner decide when to muster?
 4. Does the requisition sheet ever want vendor URLs per card for one-click cart building?
 
